@@ -1,0 +1,31 @@
+---
+- name: Cleanup
+  become: true
+  hosts: all
+  pre_tasks:
+  - name: Get test devices
+    ansible.builtin.shell: |
+      set -e -o pipefail
+      losetup -O NAME,BACK-FILE | awk '/loop-test-/ {print $1}'
+    args:
+      executable: /usr/bin/bash
+    register: _test_devices
+    tags:
+    - skip_ansible_lint
+  - name: Set test_device facts
+    ansible.builtin.set_fact:
+      test_devices: "{{ _test_devices.stdout_lines }}"
+  tasks:
+  - name: Unmount a mounted volume
+    ansible.posix.mount:
+      path: "{{ item }}"
+      state: unmounted
+    loop:
+    - /mnt/xfs-mount-point
+    - /mnt/ext4-mount-point
+  - name: Destroy loop device
+    ansible.builtin.command: "losetup -d {{ item }}"
+    failed_when: false
+    loop: "{{ test_devices }}"
+    tags:
+    - skip_ansible_lint

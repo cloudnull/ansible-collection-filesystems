@@ -1,0 +1,39 @@
+---
+- name: Converge
+  become: true
+  hosts: all
+  vars:
+    loop_device_range: "{{ range(0, 1) | list }}"
+  pre_tasks:
+  - name: Create loop device files
+    command: "dd if=/dev/zero of=/loop-test-{{ item }}.img bs=1M count=72"
+    loop: "{{ loop_device_range }}"
+    tags:
+    - skip_ansible_lint
+  - name: Setup loop device
+    command: "losetup -fP /loop-test-{{ item }}.img"
+    loop: "{{ loop_device_range }}"
+    tags:
+    - skip_ansible_lint
+  - name: Get test devices
+    ansible.builtin.shell: |
+      set -e -o pipefail
+      losetup -O NAME,BACK-FILE | awk '/loop-test-/ {print $1}'
+    args:
+      executable: /usr/bin/bash
+    register: _test_devices
+    tags:
+    - skip_ansible_lint
+  - name: Set test_device facts
+    ansible.builtin.set_fact:
+      test_devices: "{{ _test_devices.stdout_lines }}"
+  tasks:
+  - name: "Run role"
+    ansible.builtin.include_role:
+      name: "cloudnull.filesystems.zfs_pool"
+    vars:
+      zfs_arrays:
+        pool0:
+          layout: ""
+          drives:
+          - "{{ test_devices[0] }}"

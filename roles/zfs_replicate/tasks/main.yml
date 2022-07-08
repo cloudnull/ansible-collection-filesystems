@@ -1,0 +1,23 @@
+---
+
+- name: Create a new tmux session
+  ansible.builtin.command: "tmux new-session -d -s '{{ zfs_filesystem }}@{{ zfs_target_host }}'"
+  changed_when: false
+  failed_when: false
+  register: send_recv_session
+
+# tasks file for zfs_send, loop used to send in a nested tmux command.
+- name: Initiate ZFS Send / Recv
+  become: true
+  ansible.builtin.shell: "tmux send-keys '{{ item }} && exit' C-m"
+  args:
+    executable: /usr/bin/bash
+  loop:
+  - zfs send {{ zfs_pool }}/{{ zfs_filesystem }} |
+    mbuffer -q -s 128k -m 1G |
+    ssh {{ zfs_replicate_ssh_options }} {{ ansible_user }}@{{ hostvars[zfs_target_host]["ansible_host"] }}
+    "mbuffer -s 128k -m 1G | zfs receive -s -F {{ zfs_pool }}/{{ zfs_filesystem }}"
+  when:
+  - send_recv_session.rc == 0
+  tags:
+  - skip_ansible_lint

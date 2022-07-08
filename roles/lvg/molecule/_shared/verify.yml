@@ -1,0 +1,14 @@
+---
+- name: check
+  become: true
+  hosts: all
+  tasks:
+  - name: "Run vg check"
+    ansible.builtin.command: vgck pool0
+    register: vg_status
+    tags:
+    - skip_ansible_lint
+  - name: Check for drives
+    ansible.builtin.assert:
+      that:
+        - vg_status.rc == 0

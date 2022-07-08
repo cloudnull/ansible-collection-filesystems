@@ -1,0 +1,17 @@
+---
+- name: Instantiate pools
+  become: true
+  block:
+  - name: Run pool interaction
+    ansible.builtin.include_tasks: _zfs_pools.yml
+    loop: "{{ zfs_arrays | dict2items }}"
+    vars:
+      _zfs_name: "{{ item.key }}"
+      _zfs_layout: "{{ item.value.layout }}"
+      _zfs_pool_configs: "{{ item.value.pool_configs | default({}) }}"
+      _zfs_pool_options: "{{ item.value.pool_options | default({}) }}"
+      _zfs_fs_configs: "{{ item.value.fs_configs | default({}) }}"
+      _zfs_devices: "{{ item.value.drives }}"
+      _zfs_cache: "{{ item.value.cache | default([]) }}"
+      _zfs_log: "{{ item.value.log | default([]) }}"
+      _zfs_filesystems: "{{ item.value.filesystems | default({}) }}"

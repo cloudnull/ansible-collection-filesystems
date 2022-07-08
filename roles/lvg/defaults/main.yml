@@ -1,0 +1,19 @@
+---
+
+# Notes
+# * drives           -- An array of devices.
+# * logical_volumes  -- A hash of logical volumes to be created under a given VG, with each volume
+#                       key additional configuration can be defined. If no additional configuration
+#                       is needed the key can be used with an empty hash or null.
+#
+# volume_groups:
+#   pool0:
+#     drives:
+#     - "/dev/md0"
+#     logical_volumes:
+#       snapshots:
+#         size: 200G
+#       ledger:
+#         size: 200G
+#       account:
+#         size: 200G

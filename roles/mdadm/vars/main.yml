@@ -1,0 +1,7 @@
+---
+# This variable is expected to be set dynamically whenever a new array is created.
+_mdadm_update_initramfs: false
+
+mdadm_packages:
+- xfsprogs
+- mdadm

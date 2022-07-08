@@ -1,0 +1,13 @@
+---
+- name: Create BTRFS filesystem
+  become: true
+  block:
+  - name: Run pool interaction
+    ansible.builtin.include_tasks: _btrfs_pool.yml
+    loop: "{{ btrfs_pools | dict2items }}"
+    vars:
+      _btrfs_name: "{{ item.key }}"
+      _btrfs_drives: "{{ item.value.drives }}"
+      _btrfs_layout: "{{ item.value.layout }}"
+      _btrfs_subvolumes: "{{ item.value.subvolumes | default({}) }}"
+      _btrfs_mount_options: "{{ item.value.mount_options | default(['defaults']) }}"

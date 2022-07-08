@@ -1,0 +1,18 @@
+---
+#
+# The mdadm role requires one specific variable which is host specific.
+# The role will deploy most any raid configuration, apply a file system,
+# and create a service to automatically mount the array. If the variable
+# is undefined or empty this role is non-op.
+#
+# mdadm_arrays:
+#   md0:
+#     drives:
+#     - "/dev/nvme1n1"
+#     - "/dev/nvme2n1"
+#     level: "raid0"
+#   md1:
+#     drives:
+#     - "/dev/nvme3n1"
+#     - "/dev/nvme4n1"
+#     level: "raid0"

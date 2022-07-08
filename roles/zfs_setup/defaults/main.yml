@@ -1,0 +1,20 @@
+---
+zfs_arc_max_bytes: "{{ (((_zfs_quarter_mb | int) >= 24576) | ternary(24576, (_zfs_quarter_mb | int))) * 1024 * 1024 | round | int }}"
+zfs_arc_meta_limit: "{{ ((zfs_arc_max_bytes | int) * 0.25) | round | int }}"
+zfs_arc_min: "{{ ((zfs_arc_max_bytes | int) * 0.125) | round | int }}"
+
+zfs_performance_tuning:
+- param: zfs_txg_timeout
+  value: 5
+- param: zfs_arc_max
+  value: "{{ zfs_arc_max_bytes }}"
+- param: zfs_arc_meta_limit
+  value: "{{ zfs_arc_meta_limit }}"
+- param: zfs_arc_min
+  value: "{{ zfs_arc_min }}"
+- param: zfs_async_block_max_blocks
+  value: 5120
+- param: zfs_delete_blocks
+  value: 1024
+# Enable or disable node reboots after ZFS install
+zfs_allow_reboot: false

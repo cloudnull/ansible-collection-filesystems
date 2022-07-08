@@ -1,0 +1,19 @@
+---
+- name: Regenerate the initramfs
+  ansible.builtin.command: update-initramfs -u
+  become: true
+  listen: initramfs reload
+
+- name: Reboot
+  ansible.builtin.reboot:
+    reboot_timeout: 3600
+  listen: reboot machine
+  when:
+  - zfs_allow_reboot | bool
+
+- name: Reboot (DISABLED)
+  ansible.builtin.debug:
+    msg: "System requires reboot, please do that before using the ZFS system."
+  listen: reboot machine
+  when:
+  - not (zfs_allow_reboot | bool)

@@ -1,0 +1,84 @@
+---
+
+- name: Drive data
+  block:
+  - name: Get drive UUID
+    ansible.builtin.command: >-
+      blkid --output export "{{ _btrfs_drives[0] }}"
+    register: _btrfs_blkid_output
+    changed_when: false
+    failed_when: false
+  - name: "Convert to dict list"
+    ansible.builtin.set_fact:
+      _btrfs_drive_data: "{{ _btrfs_drive_data|default({}) | combine({_btrfs_env_item.split('=')[0]: _btrfs_env_item.split('=')[1]}) }}"
+    loop: "{{ _btrfs_blkid_output.stdout_lines }}"
+    loop_control:
+      loop_var: _btrfs_env_item
+    when:
+    - _btrfs_blkid_output.rc == 0
+  - name: Set fallback data fact
+    ansible.builtin.set_fact:
+      _btrfs_drive_data:
+        UUID: MISSING
+    when:
+    - _btrfs_blkid_output.rc != 0
+
+- name: Create new btrfs filesystem
+  ansible.builtin.command: >-
+    mkfs.btrfs -L {{ _btrfs_name }} -m {{ _btrfs_drive_layout[_btrfs_layout] }} -d {{ _btrfs_layout }} {{ _btrfs_drives | join(' ') }}
+  args:
+    creates: "/dev/disk/by-uuid/{{ _btrfs_drive_data['UUID'] }}"
+  register: _btrfs_create
+
+- name: Re-gather drive data
+  when:
+  - _btrfs_create is changed
+  block:
+  - name: Get drive UUID
+    ansible.builtin.command: >-
+      blkid --output export "{{ _btrfs_drives[0] }}"
+    register: _btrfs_blkid_output
+    changed_when: false
+  - name: "Convert to dict list"
+    ansible.builtin.set_fact:
+      _btrfs_drive_data: "{{ _btrfs_drive_data|default({}) | combine({_btrfs_env_item.split('=')[0]: _btrfs_env_item.split('=')[1]}) }}"
+    loop: "{{ _btrfs_blkid_output.stdout_lines }}"
+    loop_control:
+      loop_var: _btrfs_env_item
+
+- name: Create mountpoint
+  ansible.builtin.file:
+    path: "/data/{{ _btrfs_name }}"
+    state: directory
+    mode: "0755"
+
+- name: Mount the filesystem
+  ansible.posix.mount:
+    path: "/data/{{ _btrfs_name }}"
+    src: "/dev/disk/by-uuid/{{ _btrfs_drive_data['UUID'] }}"
+    fstype: "btrfs"
+    opts: "{{ _btrfs_mount_options | join(',') }}"
+    state: mounted
+
+- name: Mount block
+  when:
+  - (_btrfs_subvolumes | length) > 0
+  block:
+  - name: Create subvolume
+    ansible.builtin.command: >-
+      btrfs subvolume create /data/{{ _btrfs_name }}/{{ _btrfs_subvol.key }}
+    args:
+      creates: "/data/{{ _btrfs_name }}/{{ _btrfs_subvol.key }}"
+    loop: "{{ _btrfs_subvolumes | dict2items }}"
+    loop_control:
+      loop_var: _btrfs_subvol
+  - name: Mount the filesystem
+    ansible.posix.mount:
+      path: "{{ _btrfs_subvol.value }}"
+      src: "/dev/disk/by-uuid/{{ _btrfs_drive_data['UUID'] }}"
+      fstype: "btrfs"
+      opts: "subvol={{ _btrfs_subvol.key }}"
+      state: mounted
+    loop: "{{ _btrfs_subvolumes | dict2items }}"
+    loop_control:
+      loop_var: _btrfs_subvol

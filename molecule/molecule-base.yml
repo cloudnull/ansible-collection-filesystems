@@ -1,0 +1,9 @@
+---
+dependency:
+  name: galaxy
+provisioner:
+  name: ansible
+  playbooks:
+    create: create.yml
+verifier:
+  name: ansible

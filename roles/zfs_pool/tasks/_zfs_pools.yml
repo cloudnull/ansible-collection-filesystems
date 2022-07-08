@@ -1,0 +1,77 @@
+---
+- name: Gather facts about ZFS dataset
+  community.general.zfs_facts:
+    name: "{{ _zfs_name }}"
+  failed_when: false
+
+- name: "Create pool"
+  ansible.builtin.command: >-
+    {% set options = _zfs_pool_options | cloudnull.filesystems.create_option %}
+    {% if _zfs_layout == "raid0" %}
+    zpool create {{ options }} -f {{ _zfs_name }} {{ _zfs_devices | join(' ') }}
+    {% elif _zfs_layout == "mirror" %}
+    zpool create {{ options }} -f {{ _zfs_name }} {{ _zfs_devices | cloudnull.filesystems.mirror_chunk }}
+    {% else %}
+    zpool create {{ options }} -f {{ _zfs_name }} {{ _zfs_layout }} {{ _zfs_devices | join(' ') }}
+    {% endif %}
+  when:
+  - ansible_zfs_datasets is undefined
+
+- name: "Set zfs configs"
+  ansible.builtin.command: "zfs set {{ pool_item.key }}={{ pool_item.value }} {{ _zfs_name }}"
+  loop: "{{ _zfs_pool_configs | dict2items }}"
+  loop_control:
+    loop_var: pool_item
+  tags:
+  - skip_ansible_lint
+
+- name: "Set pool configs"
+  ansible.builtin.command: "zpool set {{ pool_item.key }}={{ pool_item.value }} {{ _zfs_name }}"
+  loop: "{{ _zfs_fs_configs | dict2items }}"
+  loop_control:
+    loop_var: pool_item
+  tags:
+  - skip_ansible_lint
+
+- name: Cache block
+  when:
+  - (_zfs_cache | count) > 0
+  block:
+  - name: Check pool cache
+    ansible.builtin.shell: "zpool status -v {{ _zfs_name }} | grep cache"
+    failed_when: false
+    changed_when: false
+    register: _zpool_cache
+    tags:
+    - skip_ansible_lint
+
+  - name: "Create pool cache"
+    ansible.builtin.command: "zpool add -f {{ _zfs_name }} cache {{ (_zfs_cache | length > 1) | ternary('mirror', '') }} {{ _zfs_cache | join(' ') }}"
+    when:
+    - _zpool_cache.rc != 0
+
+- name: Log block
+  when:
+  - (_zfs_log | count) > 0
+  block:
+  - name: Check pool log
+    ansible.builtin.shell: "zpool status -v {{ _zfs_name }} | grep log"
+    failed_when: false
+    changed_when: false
+    register: _zpool_log
+    tags:
+    - skip_ansible_lint
+
+  - name: "Create pool log"
+    ansible.builtin.command: "zpool add -f {{ _zfs_name }} log {{ (_zfs_log | length > 1) | ternary('mirror', '') }} {{ _zfs_log | join(' ') }}"
+    when:
+    - _zpool_log.rc != 0
+
+- name: Create filesystem
+  community.general.zfs:
+    name: "{{ _zfs_name }}/{{ pool_item.key }}"
+    state: present
+    extra_zfs_properties: "{{ pool_item.value }}"
+  loop: "{{ _zfs_filesystems | dict2items }}"
+  loop_control:
+    loop_var: pool_item

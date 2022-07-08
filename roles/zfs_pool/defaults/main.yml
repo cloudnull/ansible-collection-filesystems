@@ -1,0 +1,38 @@
+---
+
+# Notes
+# * layout       -- The key `layout` uses all of the default ZFS raid layouts, including "mirror"
+#                   the special value "raid0" will create a striped array.
+# * drives       -- An array of devices.
+# * cache        -- An array of devices used for ZFS caching, when more than one device is defined
+#                   the role will create a mirror.
+# * log          -- An array of devices used for ZFS logging, when more than one device is defined
+#                   The role will create a mirror.
+# * filesystems  -- A hash of file systems to be created under a given pool, with each file
+#                   file system key, additional configuration can be defined. If no additional
+#                   configuration is needed the key can be used with an empty hash or null.
+# * pool_configs -- A hash of configuration which will be applied to the pool when created.
+# * fs_configs   -- A hash of configuration which will be applied to all filesystems.
+#
+# zfs_arrays:
+#   pool0:
+#     layout: raid0
+#     drives:
+#     - "/dev/nvme1n1"
+#     - "/dev/nvme2n1"
+#     cache:
+#     - "/dev/nvme3n1"
+#     log:
+#     - "/dev/nvme4n1"
+#     filesystems:
+#       snapshots:
+#         mountpoint: "/mnt/dir0"
+#       ledger:
+#         mountpoint: "/mnt/dir1"
+#     pool_options:
+#       ashift: 12
+#     pool_configs:
+#       atime: "off"
+#       compression: "lz4"
+#     fs_options:
+#       autoexpand: "on"

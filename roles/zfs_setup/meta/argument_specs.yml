@@ -1,0 +1,36 @@
+---
+
+argument_specs:
+  main:
+    short_description: Setup a linux server to run ZFS"
+    description: >
+      Setup a linux server to run ZFS
+    author: Kevin Carter
+    options:
+      zfs_allow_reboot:
+        type: "bool"
+        description: "Enable or disable mounting a block device."
+        required: false
+        default: true
+        choices:
+        - true
+        - false
+      zfs_performance_tuning:
+        type: "list"
+        description: "List of dictionaries which is used for performance tuning. See defaults/main.yml for more details."
+        required: false
+      zfs_arc_max_bytes:
+        type: "raw"
+        description: "The arc cache max byte size. Default is automatically computed using facts."
+        required: false
+      zfs_arc_meta_limit:
+        type: "raw"
+        description: "The arc cache max byte size. Default is 1/4 the value of zfs_arc_max_bytes."
+        required: false
+      zfs_arc_min:
+        type: "raw"
+        description: "The arc cache minimum. Default is 1/8 the value of zfs_arc_meta_limit."
+        required: false
+      zfs_setup_packages:
+        type: "list"
+        description: "List of packages to be installed when setting up ZFS. Default is distro specific."

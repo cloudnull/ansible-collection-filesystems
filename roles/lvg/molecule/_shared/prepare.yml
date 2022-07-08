@@ -1,0 +1,9 @@
+---
+- name: Prepare
+  become: true
+  hosts: all
+  pre_tasks:
+  - name: Install packages
+    package:
+      name: lvm2
+      state: present

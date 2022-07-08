@@ -1,0 +1,8 @@
+---
+- name: Converge
+  become: true
+  hosts: all
+  tasks:
+  - name: "Run role"
+    ansible.builtin.include_role:
+      name: "cloudnull.filesystems.zfs_setup"

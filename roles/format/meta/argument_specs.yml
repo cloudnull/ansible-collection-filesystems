@@ -1,0 +1,38 @@
+---
+
+argument_specs:
+  main:
+    short_description: "Format and mount a filesystem"
+    description: >
+      Format and mount a filesystem
+    author: Kevin Carter
+    options:
+      format_filesystem:
+        type: "str"
+        description: "Filesystem used when formatting a block device."
+        required: true
+      format_device:
+        type: "str"
+        description: "Block device path that will be formatted."
+        required: true
+      format_options:
+        type: "str"
+        description: "Specific filesystem options used when formatting a block device."
+        required: false
+      format_mount_enabled:
+        type: "bool"
+        description: "Enable or disable mounting a block device."
+        required: false
+        default: true
+        choices:
+        - true
+        - false
+      format_mount_point:
+        type: "str"
+        description: "Mount point for a given block device."
+        required: false
+      format_mount_options:
+        type: "str"
+        description: "Specific filesystem options used when mounting a block device."
+        required: false
+        default: "defaults"

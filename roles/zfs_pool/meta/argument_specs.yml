@@ -1,0 +1,13 @@
+---
+
+argument_specs:
+  main:
+    short_description: "Create a ZFS filesystem"
+    description: >
+      Create a ZFS filesystem
+    author: Kevin Carter
+    options:
+      zfs_arrays:
+        type: "dict"
+        required: true
+        description: ZFS filesystem hash see defaults/main.yml for more details.

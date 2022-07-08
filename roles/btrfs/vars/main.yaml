@@ -1,0 +1,6 @@
+# Built in metadata values when selecting a drive layout
+_btrfs_drive_layout:
+  raid10: raid10
+  raid0: raid1
+  raid1: raid1
+  single: single

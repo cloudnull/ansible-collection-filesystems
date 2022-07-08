@@ -1,0 +1,13 @@
+---
+
+argument_specs:
+  main:
+    short_description: "Create volume groups and volumes"
+    description: >
+      Create a volume groups and volumes
+    author: Kevin Carter
+    options:
+      volume_groups:
+        type: "dict"
+        required: true
+        description: Volume group hash

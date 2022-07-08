@@ -1,0 +1,8 @@
+---
+- name: Prepare
+  become: true
+  hosts: all
+  pre_tasks:
+  - name: "Run zfs setup role"
+    ansible.builtin.include_role:
+      name: "cloudnull.filesystems.zfs_setup"

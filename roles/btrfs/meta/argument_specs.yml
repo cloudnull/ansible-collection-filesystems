@@ -1,0 +1,13 @@
+---
+
+argument_specs:
+  main:
+    short_description: "Create BTRFS arrays"
+    description: >
+      Create BTRFS arrays
+    author: Kevin Carter
+    options:
+      btrfs_pools:
+        type: "dict"
+        required: true
+        description: BTRFS group hash

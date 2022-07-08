@@ -1,0 +1,42 @@
+---
+- name: Run ZFS file system setup
+  become: true
+  hosts: all
+  gather_facts: true
+  tags:
+  - zfs
+  roles:
+  - role: cloudnull.filesystems.zfs_setup
+    zfs_allow_reboot: true
+    tags:
+    - zfs-setup
+  - role: cloudnull.filesystems.zfs_pool
+    zfs_arrays:
+      pool0:
+        layout: raid0
+        drives:
+        - "/dev/nvme1n1"
+        - "/dev/nvme2n1"
+        cache:
+        - "/dev/nvme3n1"
+        log:
+        - "/dev/nvme4n1"
+        filesystems:
+          dir0:
+            mountpoint: "/mnt/dir0"
+          dir1:
+            mountpoint: "/mnt/dir1"
+          dir2:
+            mountpoint: "/mnt/dir2"
+        pool_options:
+          ashift: 12
+        pool_configs:
+          atime: "off"
+          compression: "lz4"
+          recordsize: "1M"
+          primarycache: "metadata"
+          xattr: "sa"
+        fs_configs:
+          autoexpand: "on"
+    tags:
+    - zfs-deploy

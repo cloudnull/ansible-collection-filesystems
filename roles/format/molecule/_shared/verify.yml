@@ -1,0 +1,23 @@
+---
+- name: check
+  become: true
+  hosts: all
+  pre_tasks:
+  - name: Get test devices
+    ansible.builtin.shell: |
+      set -e -o pipefail
+      losetup -O NAME,BACK-FILE | awk '/loop-test-/ {print $1}'
+    args:
+      executable: /usr/bin/bash
+    register: _test_devices
+    tags:
+    - skip_ansible_lint
+  - name: Set test_device facts
+    ansible.builtin.set_fact:
+      test_devices: "{{ _test_devices.stdout_lines }}"
+  tasks:
+  - name: "Run check"
+    ansible.builtin.shell: blkid {{ item }} | egrep '(xfs|ext4)'
+    loop: "{{ test_devices }}"
+    tags:
+    - skip_ansible_lint

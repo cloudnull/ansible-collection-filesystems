@@ -1,0 +1,11 @@
+---
+- name: Instantiate volume group
+  become: true
+  block:
+  - name: Run pool interaction
+    ansible.builtin.include_tasks: _lv.yml
+    loop: "{{ volume_groups | dict2items }}"
+    vars:
+      _vg_name: "{{ item.key }}"
+      _vg_drives: "{{ item.value.drives }}"
+      _vg_logical_volumes: "{{ item.value.logical_volumes | default({}) }}"

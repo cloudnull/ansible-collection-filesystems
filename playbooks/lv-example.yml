@@ -1,0 +1,35 @@
+---
+- name: Run LV file system setup
+  become: true
+  hosts: all
+  gather_facts: true
+  tags:
+  - lv
+  roles:
+  - role: cloudnull.filesystems.lvg
+    volume_groups:
+      pool0:
+        drives:
+        - "/dev/nvme1n1"
+        - "/dev/nvme2n1"
+        - "/dev/nvme3n1"
+        - "/dev/nvme4n1"
+        logical_volumes:
+          lv0:
+            size: 1T
+          lv1:
+            size: 2T
+          lv2:
+            size: 256G
+  - role: cloudnull.filesystems.format
+    format_filesystem: xfs
+    format_device: /dev/mapper/lv0
+    format_mount_point: /mnt/lv0-mount-point
+  - role: cloudnull.filesystems.format
+    format_filesystem: xfs
+    format_device: /dev/mapper/lv1
+    format_mount_point: /mnt/lv1-mount-point
+  - role: cloudnull.filesystems.format
+    format_filesystem: xfs
+    format_device: /dev/mapper/lv2
+    format_mount_point: /mnt/lv2-mount-point

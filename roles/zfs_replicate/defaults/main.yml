@@ -1,0 +1,14 @@
+---
+# defaults file for zfs_send
+zfs_replicate_ssh_options: >-
+  -o UserKnownHostsFile=/dev/null
+  -o StrictHostKeyChecking=no
+  -o ServerAliveInterval=64
+  -o ServerAliveCountMax=1024
+  -o Compression=no
+  -o TCPKeepAlive=yes
+  -o VerifyHostKeyDNS=no
+  -o ForwardX11=no
+  -o ForwardAgent=yes
+  -o UseDNS=no
+  -T

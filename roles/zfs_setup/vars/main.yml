@@ -1,0 +1,2 @@
+---
+_zfs_quarter_mb: "{{ ((ansible_memtotal_mb | int) * 0.25) }}"

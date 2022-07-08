@@ -1,0 +1,25 @@
+---
+- name: Run BTRFS file system setup
+  become: true
+  hosts: all
+  gather_facts: true
+  tags:
+  - btrfs
+  roles:
+  - role: cloudnull.filesystems.btrfs
+    btrfs_pools:
+      pool0:
+        layout: raid0
+        mount_options:
+        - noatime
+        - space_cache=v2
+        - compress=lzo
+        drives:
+        - "/dev/nvme1n1"
+        - "/dev/nvme2n1"
+        - "/dev/nvme3n1"
+        - "/dev/nvme4n1"
+        subvolumes:
+          snapshots: /home/solana/snapshots
+          ledger: /home/solana/ledger
+          account: /home/solana/account

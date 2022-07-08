@@ -1,0 +1,11 @@
+---
+- name: check
+  become: true
+  hosts: all
+  tasks:
+  - name: "Run ZFS check"
+    ansible.builtin.shell: |
+      set -e -o pipefail
+      lsmod | grep '^zfs'
+    tags:
+    - skip_ansible_lint

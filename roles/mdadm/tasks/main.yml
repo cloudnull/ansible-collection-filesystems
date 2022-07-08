@@ -1,0 +1,34 @@
+---
+- name: mdadm arrays setup
+  become: true
+  block:
+  - name: Ensure mdadm is installed
+    ansible.builtin.package:
+      name: "{{ mdadm_packages }}"
+      state: "present"
+
+  - name: Run mdadm array create
+    ansible.builtin.include_tasks: _mdadm_create.yml
+    loop: "{{ mdadm_arrays | dict2items }}"
+    loop_control:
+      loop_var: outer_item
+
+  - name: Capturing array detail(s)
+    ansible.builtin.command: "mdadm --detail --scan"
+    register: "array_details"
+    changed_when: false
+
+  - name: Updating mdadm.conf
+    ansible.builtin.lineinfile:
+      dest: "/etc/mdadm/mdadm.conf"
+      regexp: "^{{ item }}"
+      line: "{{ item }}"
+      state: "present"
+      create: true
+      mode: "0644"
+    loop: '{{ array_details.stdout_lines }}'
+
+  - name: Updating initramfs
+    ansible.builtin.command: "/usr/sbin/update-initramfs -u"
+    when:
+    - _mdadm_update_initramfs | bool

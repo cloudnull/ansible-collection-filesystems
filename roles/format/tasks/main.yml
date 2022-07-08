@@ -1,0 +1,24 @@
+---
+- name: Creating array filesystem
+  community.general.filesystem:
+    fstype: "{{ format_filesystem }}"
+    opts: "{{ format_options | default(omit) }}"
+    dev: "{{ format_device }}"
+
+- name: Mount block
+  when:
+  - format_mount_enabled | bool
+  block:
+  - name: Create mountpoint
+    ansible.builtin.file:
+      path: "{{ format_mount_point }}"
+      state: directory
+      mode: "0755"
+
+  - name: Mount the filesystem
+    ansible.posix.mount:
+      path: "{{ format_mount_point }}"
+      src: "{{ format_device }}"
+      fstype: "{{ format_filesystem }}"
+      opts: "{{ format_mount_options }}"
+      state: mounted

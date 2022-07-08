@@ -1,0 +1,15 @@
+---
+
+argument_specs:
+  main:
+    short_description: "Create a RAID using MDADM"
+    description: >
+      Create a RAID array using MDADM
+    author: Kevin Carter
+    options:
+      mdadm_arrays:
+        type: "dict"
+        required: true
+        description: MDADM hash see defaults/main.yml for more details.
+      mdadm_packages:
+        type: "list"

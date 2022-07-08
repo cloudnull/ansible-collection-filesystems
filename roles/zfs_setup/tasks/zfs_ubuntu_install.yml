@@ -1,0 +1,10 @@
+---
+- name: Ensure zfs repo is present
+  ansible.builtin.apt_repository:
+    repo: "deb http://us.archive.ubuntu.com/ubuntu {{ ansible_distribution_release | lower }} universe"
+    state: present
+
+- name: Ensure ZFS is installed
+  ansible.builtin.package:
+    name: "{{ zfs_setup_packages }}"
+    state: present

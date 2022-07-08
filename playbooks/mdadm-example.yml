@@ -1,0 +1,29 @@
+---
+- name: Run MDADM RAID setup and format
+  become: true
+  hosts: all
+  roles:
+  - role: cloudnull.filesystems.mdadm
+    mdadm_arrays:
+      md0:
+        drives:
+        - "/dev/nvme1n1"
+        - "/dev/nvme2n1"
+        level: "raid0"
+        layout: ""
+        fs_options: ""
+      md1:
+        drives:
+        - "/dev/nvme3n1"
+        - "/dev/nvme4n1"
+        level: "raid0"
+        layout: ""
+        fs_options: ""
+  - role: cloudnull.filesystems.format
+    format_filesystem: xfs
+    format_device: /dev/md0
+    format_mount_point: /mnt/md0-mount-point
+  - role: cloudnull.filesystems.format
+    format_filesystem: xfs
+    format_device: /dev/md1
+    format_mount_point: /mnt/md1-mount-point

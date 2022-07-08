@@ -1,0 +1,23 @@
+---
+
+argument_specs:
+  main:
+    short_description: "Replicate a ZFS filesystem to another machine"
+    description: >
+      Replicate a ZFS filesystem to another machine
+    author: Kevin Carter
+    options:
+      zfs_pool:
+        type: "str"
+        required: true
+        description: The ZFS pool to be replicated
+      zfs_filesystem:
+        type: "str"
+        required: true
+        description: The ZFS filesystem (including snapshot) to be replicated
+      zfs_target_host:
+        type: "str"
+        required: true
+        description: The ansible inventory hostname that will receive the ZFS filesystem
+      zfs_replicate_ssh_options:
+        type: "str"

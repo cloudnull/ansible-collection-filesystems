@@ -1,0 +1,28 @@
+---
+- name: check
+  become: true
+  hosts: all
+  pre_tasks:
+  - name: Get test devices
+    ansible.builtin.shell: |
+      set -e -o pipefail
+      losetup -O NAME,BACK-FILE | awk '/loop-test-/ {print $1}'
+    args:
+      executable: /usr/bin/bash
+    register: _test_devices
+    tags:
+    - skip_ansible_lint
+  - name: Set test_device facts
+    ansible.builtin.set_fact:
+      test_devices: "{{ _test_devices.stdout_lines }}"
+  tasks:
+  - name: "Run ZFS check"
+    ansible.builtin.command: mdadm -v --detail --scan /dev/md0
+    register: zpool_status
+    tags:
+    - skip_ansible_lint
+  - name: Check for drives
+    ansible.builtin.assert:
+      that:
+        - (item | basename) in zpool_status.stdout
+    loop: "{{ test_devices }}"

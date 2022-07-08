@@ -1,0 +1,24 @@
+---
+
+driver:
+  name: delegated
+  options:
+    managed: false
+    ansible_connection_options:
+      ansible_connection: local
+
+provisioner:
+  name: ansible
+  playbooks:
+    cleanup: ../_shared/cleanup.yml
+    verify: ../_shared/verify.yml
+
+platforms:
+  - name: instance
+
+scenario:
+  test_sequence:
+    - create
+    - converge
+    - verify
+    - cleanup
