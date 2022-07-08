@@ -1,0 +1,3 @@
+---
+_zfs_quarter_mb: "{{ ((ansible_memtotal_mb | int) * 0.25) }}"
+zfs_arc_max_bytes: "{{ (_zfs_quarter_mb | int) >= 65536 | ternary(_zfs_quarter_mb, 65536) * 1024 * 1024 | round | int }}"

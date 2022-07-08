@@ -1,0 +1,16 @@
+---
+zfs_allow_reboot: false
+
+zfs_performance_tuning:
+  - param: zfs_prefetch_disable
+    value: 1
+  - param: zfs_txg_timeout
+    value: 5
+  - param: zfs_arc_max
+    value: "{{ zfs_arc_max_bytes }}"
+  - param: zfs_arc_meta_limit
+    # 1/4 zfs_arc_max
+    value: "{{ ((zfs_arc_max_bytes | int) * 0.125) | round | int }}"
+  - param: zfs_arc_min
+    # 1/2 zfs_arc_meta_limit
+    value: "{{ ((zfs_arc_max_bytes | int) * 0.0625) | round | int }}"

@@ -1,0 +1,30 @@
+---
+#
+# The mdadm role requires one specific variable which is host specific.
+# The role will deploy most any raid configuration, apply a file system,
+# and create a service to automatically mount the array. If the variable
+# is undefined or empty this role is non-op.
+#
+# mdadm_arrays:
+#   md0:
+#     drives":
+#     - "nvme1n1"
+#     - "nvme2n1"
+#     level: "raid0"
+#     layout: ""
+#     fs: "xfs"
+#     fs_options: ""
+#     fs_mount_options: "defaults"
+#     mount_point: "/mnt/figment-md1"
+#   md1:
+#     drives":
+#     - "nvme3n1"
+#     - "nvme4n1"
+#     level: "raid0"
+#     layout: ""
+#     fs: "xfs"
+#     fs_options: ""
+#     fs_mount_options: "defaults"
+#     mount_point: "/mnt/figment-md1"
+
+mdadm_arrays: {}

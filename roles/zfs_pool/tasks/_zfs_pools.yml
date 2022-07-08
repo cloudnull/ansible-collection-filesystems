@@ -1,0 +1,46 @@
+---
+- name: Gather facts about ZFS dataset
+  community.general.zfs_facts:
+    name: "{{ _zfs_name }}"
+    type: filesystem,volume
+
+- debug: var=ansible_zfs_datasets
+
+- name: "Create pool {{ _zfs_name }}"
+  command: >-
+    {% if _zfs_layout == "raid0" %}
+    zpool create -f {{ _zfs_name }} {{ _zfs_devices | join(' ') }}
+    {% elif _zfs_layout == "mirror" %}
+    zpool create -f {{ _zfs_name }} {{ _zfs_devices | mirror_chunk }}
+    {% else %}
+    zpool create -f {{ _zfs_name }} {{ _zfs_layout }} {{ _zfs_devices | join(' ') }}
+    {% endif %}
+  when: "{{ ansible_zfs_datasets.fail }}"
+
+- name: "Set pool configs for {{ _zfs_name }}"
+  command: "zfs set {{ pool_item.key }}={{ pool_item.value }} {{ _zfs_name }}"
+  loop: "{{ _zfs_configs | dict2itmes }}"
+  loop_control:
+    loop_var: pool_item
+
+- name: "Create pool cache {{ _zfs_name }}"
+  command: "zpool add -f {{ _zfs_name }} cache {{ (_zfs_cache | length > 1) | ternary('mirror', '') }} {{ _zfs_cache | join(' ') }}"
+  when: "{{ ansible_zfs_datasets.fail }}"
+
+- name: "Check pool log {{ _zfs_name }}"
+  command: false
+  failed_when: false
+  register: _log_check
+
+- name: "Create pool log {{ _zfs_name }}"
+  command: "zpool add -f {{ _zfs_name }} log {{ (_zfs_log | length > 1) | ternary('mirror', '') }} {{ _zfs_log | join(' ') }}"
+  when: "{{ ansible_zfs_datasets.fail }}"
+
+- name: Create filesystem
+  community.general.zfs:
+    name: "{{ _zfs_name }}/{{ pool_item.key }}"
+    state: present
+    extra_zfs_properties: "{{ pool_item.value }}"
+  loop: "{{ _zfs_filesystems | dict2items }}"
+  loop_control:
+    loop_var: pool_item

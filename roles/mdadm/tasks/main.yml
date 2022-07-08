@@ -1,0 +1,35 @@
+---
+- name: mdadm arrays setup
+  become: true
+  when:
+  - (mdadm_arrays | length) > 0
+  block:
+  - name: Ensure mdadm is installed
+    package:
+      name: "{{ mdadm_packages }}"
+      state: "present"
+
+  - name: Run mdadm array create
+    include_tasks: _mdadm_create.yml
+    loop: "{{ mdadm_arrays | dict2items }}"
+    loop_control:
+      loop_var: outer_item
+
+  - name: Capturing array detail(s)
+    command: "mdadm --detail --scan"
+    register: "array_details"
+    changed_when: false
+
+  - name: Updating mdadm.conf
+    lineinfile:
+      dest: "/etc/mdadm/mdadm.conf"
+      regexp: "^{{ item }}"
+      line: "{{ item }}"
+      state: "present"
+      create: true
+    loop: '{{ array_details.stdout_lines }}'
+
+  - name: Updating initramfs
+    command: "/usr/sbin/update-initramfs -u"
+    when:
+    - _mdadm_update_initramfs | bool

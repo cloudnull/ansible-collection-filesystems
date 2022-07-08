@@ -1,0 +1,65 @@
+---
+# NOTE(cloudnull): This task file will run three checks to see if the target RAID array exists.
+#                  This tripleo check is done to ensure we're not damaging data and the role
+#                  remains idempotent.
+
+- name: Check status of array
+  shell: >-
+    grep "^{{ outer_item.key }}" /proc/mdstat
+  register: "array_check"
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Check array config
+  shell: >-
+    grep "^ARRAY.*{{ outer_item.key }}" /etc/mdadm/mdadm.conf
+  register: "config_check"
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Create array block
+  become: true
+  when:
+  - array_check.rc != 0
+  - config_check.rc != 0
+  block:
+  - name: Creating array
+    shell: >-
+      yes | mdadm
+      --create /dev/{{ outer_item.key }}
+      --level={{ outer_item.value.level }}
+      --chunk={{ outer_item.value.chunk | default(64) }}
+      --raid-devices={{ outer_item.value.drives | count }}
+      {{ ['/dev/'] | product(outer_item.value.drives) | map('join', '') | list | join (' ') }}
+    args:
+      creates: "/dev/{{ outer_item.key }}"
+    register: "array_created"
+    tags:
+    - skip_ansible_lint
+
+  - name: Creating array filesystem
+    filesystem:
+      fstype: "{{ outer_item.value.fs }}"
+      opts: "{{ outer_item.value.fs_options | default(omit) }}"
+      dev: "/dev/{{ outer_item.key }}"
+
+  - name: Set update initramfs fact
+    set_fact:
+      _mdadm_update_initramfs: true
+    when:
+    - array_created is changed
+
+- name: Create mountpoint
+  file:
+    path: "{{ outer_item.value.mount_point }}"
+    state: directory
+
+- name: Add the raid to fstab
+  mount:
+    path: "{{ outer_item.value.mount_point }}"
+    src: "/dev/{{ outer_item.key }}"
+    fstype: "{{ outer_item.value.fs }}"
+    opts: "{{ outer_item.value.fs_mount_options | default('defaults') }}"
+    state: mounted

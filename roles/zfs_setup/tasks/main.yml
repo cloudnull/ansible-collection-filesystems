@@ -1,0 +1,55 @@
+---
+- name: Gather variables for each operating system
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_version'] | lower }}.yml"
+        - "{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution_major_version'] | lower }}.yml"
+        - "{{ ansible_facts['distribution'] | lower }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution_version'].split('.')[0] }}.yml"
+        - "{{ ansible_facts['os_family'] | lower }}.yml"
+      paths:
+        - "{{ role_path }}/vars"
+  tags:
+    - always
+
+- name: Run distro install
+  ansible.builtin.include_tasks: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "zfs_{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_version'] | lower }}_install.yml"
+        - "zfs_{{ ansible_facts['distribution'] | lower }}-{{ ansible_facts['distribution_major_version'] | lower }}_install.yml"
+        - "zfs_{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution_major_version'] | lower }}_install.yml"
+        - "zfs_{{ ansible_facts['distribution'] | lower }}_install.yml"
+        - "zfs_{{ ansible_facts['os_family'] | lower }}-{{ ansible_facts['distribution_version'].split('.')[0] }}_install.yml"
+        - "zfs_{{ ansible_facts['os_family'] | lower }}_install.yml"
+      paths:
+        - "{{ role_path }}/tasks"
+
+- name: ubuntu | configuring ZFS
+  ansible.builtin.template:
+    src: zfs.j2
+    dest: /etc/default/zfs
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+  - initramfs reload
+
+- name: Tuning zfs performance
+  ansible.builtin.template:
+    src: zfs.conf.j2
+    dest: /etc/modprobe.d/zfs.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+  - reboot machine
+
+- name: Enabling zfs module
+  community.general.modprobe:
+    name: zfs
+    state: present

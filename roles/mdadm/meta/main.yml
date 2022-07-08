@@ -1,0 +1,16 @@
+---
+galaxy_info:
+  author: Kevin Carter
+  description: Software RAID configuration
+  company: Figment
+  license: unpublished
+  min_ansible_version: "2.9"
+  platforms:
+  - name: Ubuntu
+    versions:
+    - focal
+  galaxy_tags:
+  - raid
+  - mdadm
+
+dependencies: []

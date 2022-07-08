@@ -1,0 +1,13 @@
+---
+- name: Instantiate pools
+  become: true
+  include_tasks: _zfs_pools.yml
+  loop: "{{ zfs_arrays | dict2items }}"
+  vars:
+    _zfs_name: "{{ item.key }}"
+    _zfs_layout: "{{ item.layout }}"
+    _zfs_configs: "{{ item.value.configs }}"
+    _zfs_devices: "{{ item.value.drives }}"
+    _zfs_cache: "{{ item.value.cache }}"
+    _zfs_log: "{{ item.value.log }}"
+    _zfs_filesystems: "{{ item.value.filesystems }}"
