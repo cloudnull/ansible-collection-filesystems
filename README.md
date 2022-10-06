@@ -1,16 +1,14 @@
 # Cloudnull filesystems Collection for Ansible
 
-[![MIT licensed][badge-license]][link-license]
-[![Galaxy Collection][badge-collection]][link-galaxy]
-[![CI][badge-gh-actions]][link-gh-actions]
-
 This collection includes helpful Ansible roles and content to help with automating the deployment of file systems at cloudnull.
 
 See example playbooks within the collection for how the roles and modules may be used.
 
 Roles included in this collection (click on the link to see the role's README and documentation):
 
+  - `cloudnull.filesystems.btrfs`
   - `cloudnull.filesystems.format`
+  - `cloudnull.filesystems.lvg`
   - `cloudnull.filesystems.mdadm`
   - `cloudnull.filesystems.zfs_pool`
   - `cloudnull.filesystems.zfs_replicate`
