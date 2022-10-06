@@ -37,3 +37,5 @@ doc/build/*
 # JetBrain
 .idea/
 .cache
+
+*.tar.gz
