@@ -11,6 +11,8 @@
     lv: "{{ _lvol_item.key }}"
     size: "{{ _lvol_item.value.size }}"
     opts: "{{ _lvol_item.value.opts | default(omit) }}"
+    resizefs: "{{ _lvol_item.value.resizefs | default(omit) }}"
+    shrink: false
   loop: "{{ _vg_logical_volumes | dict2items }}"
   loop_control:
     loop_var: _lvol_item

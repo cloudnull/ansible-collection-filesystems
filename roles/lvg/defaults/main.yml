@@ -6,6 +6,9 @@
 #                       key additional configuration can be defined. If no additional configuration
 #                       is needed the key can be used with an empty hash or null.
 #
+#   Logical volumes can be forcefully resized by setting the `resizefs` option to **true**.
+#   Logical volumes can not shrink, the role forcefully prohibits this to protect data.
+#
 # volume_groups:
 #   pool0:
 #     drives:
@@ -15,6 +18,7 @@
 #         size: 200G
 #       ledger:
 #         size: 200G
+#         resizefs: true
 #       account:
 #         size: 200G
 #         opts: --type cache-pool
