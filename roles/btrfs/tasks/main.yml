@@ -5,9 +5,11 @@
   - name: Run pool interaction
     ansible.builtin.include_tasks: _btrfs_pool.yml
     loop: "{{ btrfs_pools | dict2items }}"
+    loop_control:
+      loop_var: _btrfs_item
     vars:
-      _btrfs_name: "{{ item.key }}"
-      _btrfs_drives: "{{ item.value.drives }}"
-      _btrfs_layout: "{{ item.value.layout }}"
-      _btrfs_subvolumes: "{{ item.value.subvolumes | default({}) }}"
-      _btrfs_mount_options: "{{ item.value.mount_options | default(['defaults']) }}"
+      _btrfs_name: "{{ _btrfs_item.key }}"
+      _btrfs_drives: "{{ _btrfs_item.value.drives }}"
+      _btrfs_layout: "{{ _btrfs_item.value.layout }}"
+      _btrfs_subvolumes: "{{ _btrfs_item.value.subvolumes | default({}) }}"
+      _btrfs_mount_options: "{{ _btrfs_item.value.mount_options | default(['defaults']) }}"

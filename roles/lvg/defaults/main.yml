@@ -17,3 +17,4 @@
 #         size: 200G
 #       account:
 #         size: 200G
+#         opts: --type cache-pool

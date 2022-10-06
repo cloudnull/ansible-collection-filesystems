@@ -5,7 +5,9 @@
   - name: Run pool interaction
     ansible.builtin.include_tasks: _lv.yml
     loop: "{{ volume_groups | dict2items }}"
+    loop_control:
+      loop_var: _lv_item
     vars:
-      _vg_name: "{{ item.key }}"
-      _vg_drives: "{{ item.value.drives }}"
-      _vg_logical_volumes: "{{ item.value.logical_volumes | default({}) }}"
+      _vg_name: "{{ _lv_item.key }}"
+      _vg_drives: "{{ _lv_item.value.drives }}"
+      _vg_logical_volumes: "{{ _lv_item.value.logical_volumes | default({}) }}"

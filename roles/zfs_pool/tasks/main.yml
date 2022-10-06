@@ -5,13 +5,15 @@
   - name: Run pool interaction
     ansible.builtin.include_tasks: _zfs_pools.yml
     loop: "{{ zfs_arrays | dict2items }}"
+    loop_control:
+      loop_var: _zfs_pool_item
     vars:
-      _zfs_name: "{{ item.key }}"
-      _zfs_layout: "{{ item.value.layout }}"
-      _zfs_pool_configs: "{{ item.value.pool_configs | default({}) }}"
-      _zfs_pool_options: "{{ item.value.pool_options | default({}) }}"
-      _zfs_fs_configs: "{{ item.value.fs_configs | default({}) }}"
-      _zfs_devices: "{{ item.value.drives }}"
-      _zfs_cache: "{{ item.value.cache | default([]) }}"
-      _zfs_log: "{{ item.value.log | default([]) }}"
-      _zfs_filesystems: "{{ item.value.filesystems | default({}) }}"
+      _zfs_name: "{{ _zfs_pool_item.key }}"
+      _zfs_layout: "{{ _zfs_pool_item.value.layout }}"
+      _zfs_pool_configs: "{{ _zfs_pool_item.value.pool_configs | default({}) }}"
+      _zfs_pool_options: "{{ _zfs_pool_item.value.pool_options | default({}) }}"
+      _zfs_fs_configs: "{{ _zfs_pool_item.value.fs_configs | default({}) }}"
+      _zfs_devices: "{{ _zfs_pool_item.value.drives }}"
+      _zfs_cache: "{{ _zfs_pool_item.value.cache | default([]) }}"
+      _zfs_log: "{{ _zfs_pool_item.value.log | default([]) }}"
+      _zfs_filesystems: "{{ _zfs_pool_item.value.filesystems | default({}) }}"

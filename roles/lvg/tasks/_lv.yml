@@ -8,7 +8,9 @@
 - name: Create logical volumes
   community.general.lvol:
     vg: "{{ _vg_name }}"
-    lv: "{{ item.key }}"
-    size: "{{ item.value.size }}"
-    opts: "{{ item.value.opts | default(omit) }}"
+    lv: "{{ _lvol_item.key }}"
+    size: "{{ _lvol_item.value.size }}"
+    opts: "{{ _lvol_item.value.opts | default(omit) }}"
   loop: "{{ _vg_logical_volumes | dict2items }}"
+  loop_control:
+    loop_var: _lvol_item
