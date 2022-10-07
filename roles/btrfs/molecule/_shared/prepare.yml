@@ -3,6 +3,6 @@
   become: true
   hosts: all
   pre_tasks:
-  - name: "Run zfs setup role"
+  - name: "Run btrfs setup role"
     ansible.builtin.package:
       name: btrfs-progs

@@ -6,7 +6,7 @@
     loop_device_range: "{{ range(0, 1) | list }}"
   pre_tasks:
   - name: Create loop device files
-    command: "dd if=/dev/zero of=/loop-test-{{ item }}.img bs=1M count=72"
+    command: "dd if=/dev/zero of=/loop-test-{{ item }}.img bs=1M count=128"
     loop: "{{ loop_device_range }}"
     tags:
     - skip_ansible_lint
@@ -17,7 +17,7 @@
     - skip_ansible_lint
   - name: Get test devices
     ansible.builtin.shell: |
-      set -e -o pipefail
+      set -o pipefail
       losetup -O NAME,BACK-FILE | awk '/loop-test-/ {print $1}'
     args:
       executable: /usr/bin/bash
