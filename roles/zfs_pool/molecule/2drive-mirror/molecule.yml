@@ -19,6 +19,7 @@ platforms:
 
 scenario:
   test_sequence:
+    - prepare
     - create
     - converge
     - verify

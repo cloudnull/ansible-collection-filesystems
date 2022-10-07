@@ -21,15 +21,18 @@
         device: /dev/pool0/lv0
         mountpoint: /mnt/lv0
   tasks:
-    - include_role:
+    - name: Raid setup
+      include_role:
         name: cloudnull.filesystems.mdadm
       vars:
         mdadm_arrays: "{{ test_mdadm_arrays }}"
-    - include_role:
+    - name: Logical volume setup
+      include_role:
         name: cloudnull.filesystems.lvg
       vars:
         volume_groups: "{{ test_volume_groups }}"
-    - include_role:
+    - name: Format drives
+      include_role:
         name: cloudnull.filesystems.format
       vars:
         format_filesystem: "{{ item.filesystem }}"

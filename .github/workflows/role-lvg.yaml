@@ -1,8 +1,8 @@
-name: Run pull-request molecule job for format
+name: Run pull-request molecule job for lvg
 on:
   pull_request:
     paths:
-    - 'roles/format/*'
+    - 'roles/lvg/*'
 jobs:
   molecule:
     runs-on: ubuntu-latest
@@ -10,7 +10,7 @@ jobs:
       fail-fast: false
       matrix:
         scenario:
-        - format-xfs
+        - 1drive
     steps:
     - name: Check out the repo
       uses: actions/checkout@v2
@@ -24,5 +24,5 @@ jobs:
       run: ansible-galaxy collection install . --upgrade
     - name: Run molecule
       run: |
-        cd roles/format
+        cd roles/lvg
         molecule --debug --base-config ../../molecule/molecule-base.yml test --scenario-name ${{ matrix.scenario }}

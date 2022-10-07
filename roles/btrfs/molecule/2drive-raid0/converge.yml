@@ -3,10 +3,10 @@
   become: true
   hosts: all
   vars:
-    loop_device_range: "{{ range(0, 4) | list }}"
+    loop_device_range: "{{ range(0, 2) | list }}"
   pre_tasks:
   - name: Create loop device files
-    command: "dd if=/dev/zero of=/loop-test-{{ item }}.img bs=1M count=72"
+    command: "dd if=/dev/zero of=/loop-test-{{ item }}.img bs=1M count=128"
     loop: "{{ loop_device_range }}"
     tags:
     - skip_ansible_lint
@@ -17,7 +17,7 @@
     - skip_ansible_lint
   - name: Get test devices
     ansible.builtin.shell: |
-      set -e -o pipefail
+      set -o pipefail
       losetup -O NAME,BACK-FILE | awk '/loop-test-/ {print $1}'
     args:
       executable: /usr/bin/bash
@@ -30,7 +30,7 @@
   tasks:
   - name: "Run role"
     ansible.builtin.include_role:
-      name: "cloudnull.filesystems.zfs_pool"
+      name: "cloudnull.filesystems.btrfs"
     vars:
       btrfs_pools:
         pool0:

@@ -37,9 +37,7 @@
           drives:
           - "{{ test_devices[0] }}"
           logical_volumes:
-            snapshots:
+            lv0:
               size: 10M
-            ledger:
-              size: 10M
-            account:
+            lv1:
               size: 10M

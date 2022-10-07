@@ -5,7 +5,7 @@
   pre_tasks:
   - name: Get test devices
     ansible.builtin.shell: |
-      set -e -o pipefail
+      set -o pipefail
       losetup -O NAME,BACK-FILE | awk '/loop-test-/ {print $1}'
     args:
       executable: /usr/bin/bash

@@ -23,15 +23,10 @@ jobs:
     - name: Install ansible-core
       run: |
         python -m pip install --upgrade pip wheel
-        python -m pip install --upgrade ansible-core
+        python -m pip install --upgrade ansible-core molecule
     - name: Install current collection
       run: ansible-galaxy collection install . --upgrade
-    - name: Molecule run
-      uses: gofrolist/molecule-action@v2
-      with:
-        molecule_options: --debug
-        molecule_command: test
-        molecule_args: >-
-          --scenario-name "${{ matrix.scenario }}"
-          --base-config "${GITHUB_WORKSPACE}/molecule/molecule-base.yaml"
-        molecule_working_dir: "${GITHUB_WORKSPACE}/roles/zfs_pool"
+    - name: Run molecule
+      run: |
+        cd roles/zfs_pool
+        molecule --debug --base-config ../../molecule/molecule-base.yml test --scenario-name ${{ matrix.scenario }}

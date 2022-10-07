@@ -5,7 +5,9 @@
   tasks:
   - name: "Run ZFS check"
     ansible.builtin.shell: |
-      set -e -o pipefail
+      set -o pipefail
       lsmod | grep '^zfs'
+    args:
+      executable: /usr/bin/bash
     tags:
     - skip_ansible_lint
