@@ -7,6 +7,7 @@
     loop: "{{ btrfs_pools | dict2items }}"
     loop_control:
       loop_var: _btrfs_item
+      label: "{{ _btrfs_item.key }}"
     vars:
       _btrfs_name: "{{ _btrfs_item.key }}"
       _btrfs_drives: "{{ _btrfs_item.value.drives }}"

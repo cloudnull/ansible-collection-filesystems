@@ -7,6 +7,7 @@
     loop: "{{ volume_groups | dict2items }}"
     loop_control:
       loop_var: _lv_item
+      label: "{{ _lv_item.key }}"
     vars:
       _vg_name: "{{ _lv_item.key }}"
       _vg_drives: "{{ _lv_item.value.drives }}"

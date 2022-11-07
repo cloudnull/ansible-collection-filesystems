@@ -22,3 +22,11 @@
 #       account:
 #         size: 200G
 #         opts: --type cache-pool
+
+# The pe_config dictionary allows operators to further control how physical volumes are represented.
+# The default will allow the module to dynamically resize the physical volume, and sets a known good
+# size. Use `pv_options` to further define advanced configuration as needed.
+pe_config:
+  pesize: 32M
+  pvresize: true
+  # pv_options: ""

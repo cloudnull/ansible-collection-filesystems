@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
     - 'roles/btrfs/*'
+    - 'roles/btrfs/defaults/*'
+    - 'roles/btrfs/meta/*'
+    - 'roles/btrfs/tasks/*'
+    - 'roles/btrfs/vars/*'
 jobs:
   molecule:
     runs-on: ubuntu-latest
