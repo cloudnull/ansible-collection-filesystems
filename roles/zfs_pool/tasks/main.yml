@@ -7,6 +7,7 @@
     loop: "{{ zfs_arrays | dict2items }}"
     loop_control:
       loop_var: _zfs_pool_item
+      label: "{{ _zfs_pool_item.key }}"
     vars:
       _zfs_name: "{{ _zfs_pool_item.key }}"
       _zfs_layout: "{{ _zfs_pool_item.value.layout }}"

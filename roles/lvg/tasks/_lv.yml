@@ -3,7 +3,9 @@
   community.general.lvg:
     vg: "{{ _vg_name }}"
     pvs: "{{ _vg_drives | join(',') }}"
-    pesize: 32M
+    pesize: "{{ pe_config.pesize }}"
+    pvresize: "{{ pe_config.pvresize }}"
+    pv_options: "{{ pe_config.pv_options | default(omit) }}"
 
 - name: Create logical volumes
   community.general.lvol:
@@ -16,3 +18,4 @@
   loop: "{{ _vg_logical_volumes | dict2items }}"
   loop_control:
     loop_var: _lvol_item
+    label: "{{ _lvol_item.key }}"

@@ -3,6 +3,10 @@ on:
   pull_request:
     paths:
     - 'roles/mdadm/*'
+    - 'roles/mdadm/defaults/*'
+    - 'roles/mdadm/meta/*'
+    - 'roles/mdadm/tasks/*'
+    - 'roles/mdadm/vars/*'
 jobs:
   molecule:
     runs-on: ubuntu-latest

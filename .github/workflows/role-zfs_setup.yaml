@@ -3,6 +3,12 @@ on:
   pull_request:
     paths:
     - 'roles/zfs_setup/*'
+    - 'roles/zfs_setup/defaults/*'
+    - 'roles/zfs_setup/handlers/*'
+    - 'roles/zfs_setup/meta/*'
+    - 'roles/zfs_setup/tasks/*'
+    - 'roles/zfs_setup/templates/*'
+    - 'roles/zfs_setup/vars/*'
 jobs:
   molecule:
     runs-on: ubuntu-latest
