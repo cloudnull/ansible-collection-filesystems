@@ -19,7 +19,7 @@
 
 - name: "Set zfs configs"
   ansible.builtin.command: "zfs set {{ pool_item.key }}={{ pool_item.value }} {{ _zfs_name }}"
-  loop: "{{ _zfs_pool_configs | dict2items }}"
+  loop: "{{ _zfs_fs_configs | dict2items }}"
   loop_control:
     loop_var: pool_item
   tags:
@@ -27,7 +27,7 @@
 
 - name: "Set pool configs"
   ansible.builtin.command: "zpool set {{ pool_item.key }}={{ pool_item.value }} {{ _zfs_name }}"
-  loop: "{{ _zfs_fs_configs | dict2items }}"
+  loop: "{{ _zfs_pool_configs | dict2items }}"
   loop_control:
     loop_var: pool_item
   tags:
