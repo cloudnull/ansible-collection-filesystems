@@ -1,7 +1,8 @@
 ---
 - name: Gather facts about ZFS dataset
-  community.general.zfs_facts:
+  community.general.zpool_facts:
     name: "{{ _zfs_name }}"
+    properties: name
   failed_when: false
 
 - name: "Create pool"
@@ -15,7 +16,7 @@
     zpool create {{ options }} -f {{ _zfs_name }} {{ _zfs_layout }} {{ _zfs_devices | join(' ') }}
     {% endif %}
   when:
-  - ansible_zfs_datasets is undefined
+  - not _zfs_name in ( ansible_zfs_pools | map(attribute='name') )
 
 - name: "Set zfs configs"
   ansible.builtin.command: "zfs set {{ pool_item.key }}={{ pool_item.value }} {{ _zfs_name }}"
