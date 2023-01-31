@@ -2,7 +2,6 @@
 - name: Gather facts about ZFS dataset
   community.general.zpool_facts:
     name: "{{ _zfs_name }}"
-    properties: name
   failed_when: false
 
 - name: "Create pool"
@@ -28,6 +27,8 @@
 
 - name: "Set pool configs"
   ansible.builtin.command: "zpool set {{ pool_item.key }}={{ pool_item.value }} {{ _zfs_name }}"
+  when:
+  - not ( pool_item.value | string ) in ( ansible_zfs_pools | map(attribute=pool_item.key) )
   loop: "{{ _zfs_pool_configs | dict2items }}"
   loop_control:
     loop_var: pool_item
