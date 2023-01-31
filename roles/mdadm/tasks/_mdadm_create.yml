@@ -30,8 +30,7 @@
       yes | mdadm
       --create
       --assume-clean
-      --level={{ outer_item.value.level }}
-      --chunk={{ outer_item.value.chunk | default(256) }}
+      --level={{ outer_item.value.level | lower }} {% if not ((outer_item.value.level | lower) == 'raid1') %} --chunk={{ outer_item.value.chunk | default(256) }} {% endif %}
       --raid-devices={{ outer_item.value.drives | count }}
       /dev/{{ outer_item.key }}
       {{ outer_item.value.drives | join (' ') }}
