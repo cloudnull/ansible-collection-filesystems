@@ -39,7 +39,6 @@
     register: "array_created"
     tags:
     - skip_ansible_lint
-
   - name: Set update initramfs fact
     ansible.builtin.set_fact:
       _mdadm_update_initramfs: true
