@@ -4,6 +4,8 @@
     fstype: "{{ format_filesystem }}"
     opts: "{{ format_options | default(omit) }}"
     dev: "{{ format_device }}"
+  when:
+    - format_enabled | bool
 
 - name: Mount block
   when:

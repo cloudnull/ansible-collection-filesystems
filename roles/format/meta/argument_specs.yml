@@ -27,6 +27,14 @@ argument_specs:
         choices:
         - true
         - false
+      format_enabled:
+        type: "bool"
+        description: "Enable or disable formating a block device."
+        required: false
+        default: true
+        choices:
+        - true
+        - false
       format_mount_point:
         type: "str"
         description: "Mount point for a given block device."

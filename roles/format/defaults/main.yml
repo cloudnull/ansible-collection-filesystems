@@ -1,3 +1,4 @@
 ---
 format_mount_enabled: true
 format_mount_options: "defaults"
+format_enabled: true
