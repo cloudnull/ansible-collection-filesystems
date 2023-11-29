@@ -11,6 +11,21 @@ argument_specs:
         type: "str"
         description: "Filesystem used when formatting a block device."
         required: true
+        choices:
+          - btrfs
+          - ext4
+          - ext3
+          - ext2
+          - ext4dev
+          - f2fs
+          - lvm
+          - octfs2
+          - reiserfs
+          - xfs
+          - vfat
+          - swap
+          - ufs
+          - none
       format_device:
         type: "str"
         description: "Block device path that will be formatted."
@@ -22,14 +37,6 @@ argument_specs:
       format_mount_enabled:
         type: "bool"
         description: "Enable or disable mounting a block device."
-        required: false
-        default: true
-        choices:
-        - true
-        - false
-      format_enabled:
-        type: "bool"
-        description: "Enable or disable formating a block device."
         required: false
         default: true
         choices:

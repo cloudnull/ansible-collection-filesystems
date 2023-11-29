@@ -5,7 +5,7 @@
     opts: "{{ format_options | default(omit) }}"
     dev: "{{ format_device }}"
   when:
-    - format_enabled | bool
+    - format_fileystem != "none"
 
 - name: Mount block
   when:
